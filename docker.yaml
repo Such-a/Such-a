@@ -1,0 +1,14 @@
+---
+- name: Distribute and run script on multiple hosts
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Copy script to remote machines
+      copy:
+        src: /home/ubuntu/docker.sh
+        dest: /home/ubuntu/docker.sh
+        mode: '0755'
+
+    - name: Execute script
+      command: bash /home/ubuntu/docker.sh
