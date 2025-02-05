@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: httpd-app
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+  namespace: httpd-app
+  labels:
+    app: app-lab
+spec:
+  containers:
+  - name: app-container
+    image: httpd:latest
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-svc
+  namespace: httpd-app
+spec:
+  selector:
+    app: app-lab
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
