@@ -1,6 +1,6 @@
 ---
 - name: Install kubectl and Helm on Management Server
-  hosts: localhost
+  hosts: ALL
   become: yes
   tasks:
 
