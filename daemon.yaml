@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: configurator
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: configurator
+  namespace: configurator
+spec:
+  selector:
+    matchLabels:
+      app: configurator
+  template:
+    metadata:
+      labels:
+        app: configurator
+    spec:
+      containers:
+        - name: configurator
+          image: bash
+          command: ["sh", "-c", "echo 'aba997ac-1c89-4d64' > /configurator/config && sleep 1d"]
+          volumeMounts:
+            - mountPath: /configurator
+              name: configurator-volume
+      volumes:
+        - name: configurator-volume
+          hostPath:
+            path: /configurator
+            type: DirectoryOrCreate
