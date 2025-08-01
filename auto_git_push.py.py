@@ -4,36 +4,26 @@ import os
 import time
 import subprocess
 
-# === Configuration ===
-WATCHED_DIR = r"C:\Users\ASUS\pythonProject\python\main1.py"  # ✅ Folder to watch
-GIT_BRANCH = "main"
-GIT_REMOTE = "origin"  # Usually 'origin'
-
-
-class AutoGitHandler(FileSystemEventHandler):
+class ChangeHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if not event.is_directory:
-            print(f"[INFO] File modified: {event.src_path}")
+            print(f"[INFO] Detected change in: {event.src_path}")
+            os.chdir(r"C:\Users\ASUS\pythonProject\python")
             try:
-                os.chdir(WATCHED_DIR)
-
                 subprocess.run(["git", "add", "."], check=True)
                 subprocess.run(["git", "commit", "-m", f"Auto update at {time.ctime()}"], check=True)
-                subprocess.run(["git", "push", GIT_REMOTE, GIT_BRANCH], check=True)
-
-                print(f"[SUCCESS] Changes pushed to {GIT_REMOTE}/{GIT_BRANCH}")
+                subprocess.run(["git", "pull", "--rebase"], check=True)
+                subprocess.run(["git", "push", "origin", "main"], check=True)
+                print("[SUCCESS] Changes pushed to GitHub.")
             except subprocess.CalledProcessError as e:
-                print(f"[ERROR] Git command failed:\n{e}")
-            except Exception as ex:
-                print(f"[ERROR] Unexpected error:\n{ex}")
+                print(f"[ERROR] Git command failed: {e}")
 
-
-# === Start Watching ===
 if __name__ == "__main__":
+    watch_path = r"C:\Users\ASUS\pythonProject\python"
+    print(f"[INFO] Watching for changes in: {watch_path}")
     observer = Observer()
-    observer.schedule(AutoGitHandler(), path=WATCHED_DIR, recursive=True)
+    observer.schedule(ChangeHandler(), path=watch_path, recursive=True)
     observer.start()
-    print(f"[INFO] Watching: {WATCHED_DIR} ... Press Ctrl+C to stop.")
 
     try:
         while True:

@@ -419,4 +419,43 @@ if __name__ == "__main__":
         logging.error(error)
 
 
+#     except Exception as error:
+#         logging.error(f"An unexpected error occurred: {error}")
+#         raise
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    try:
+        main()
+    except ClientError as error:
+        if error.response['Error']['Code'] == 'BucketAlreadyOwnedByYou':
+            logging.warning("Bucket already exists! Using it.")
+        else:
+            logging.error(error)
+    except ValueError as error:
+        logging.error(error)
+    except Exception as error:
+        logging.error(f"An unexpected error occurred: {error}")
+        raise
 
+    #deda_mikvarkhar
+
+    #gana kvela kali kalia
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    try:
+        main()
+    except ClientError as error:
+        if error.response['Error']['Code'] == 'BucketAlreadyOwnedByYou':
+            logging.warning("Bucket already exists! Using it.")
+        else:
+            logging.error(error)
+    except ValueError as error:
+        logging.error(error)
+    except Exception as error:
+        logging.error(f"An unexpected error occurred: {error}")
+        raise
+
+#     #deda_mikvarkhar
+#     #gana kvela kali kalia
+#     #gana kvela kali kalia
