@@ -1,51 +1,50 @@
-### Hi there 👋
-
 Kubernetes Hands-On DevOps Project
-
 Overview
-This repository documents a collection of practical Kubernetes tasks executed in a real cluster environment. The project focuses on persistent storage, pod scheduling, security, configuration management, networking, and containerization. All tasks were validated using kubectl commands and YAML manifests.
 
-Technologies Used
+This project contains practical Kubernetes tasks covering storage, networking, security, resource management, and workload deployment. It demonstrates real-world DevOps and Kubernetes administration skills.
+
+Technologies
+
 Kubernetes
+
 Docker
+
 Linux
+
 YAML manifests
-Persistent Volumes and Claims
-ConfigMaps and Secrets
-Ingress
+
+PersistentVolumes & PersistentVolumeClaims
+
+ConfigMaps & Secrets
+
 Deployments, Pods, DaemonSets
-Resource Requests and Limits
+
+Services & Ingress
+
+Resource Requests & Limits
+
 ServiceAccounts
 
-Task 10 – Persistent Storage (PV and PVC)
+Tasks
+Task 10 – Persistent Storage
 
-Created file on node sk8s-node-0 at /opt/KDSP00101/data/index.html
+Create file on node sk8s-node-0 at /opt/KDSP00101/data/index.html with content Acct=Finance
 
-Created PersistentVolume named task-pv-volume
-Capacity: 1Gi
-Type: hostPath
-Path: /opt/KDSP00101/data
-AccessMode: ReadWriteOnce
-StorageClass: exam
+Create PersistentVolume task-pv-volume with hostPath /opt/KDSP00101/data (1Gi, ReadWriteOnce, StorageClass exam)
 
-Created PersistentVolumeClaim task-pv-claim requesting 100Mi
+Create PersistentVolumeClaim task-pv-claim requesting 100Mi
 
-Created a Pod with label app=my-storage-app
+Create Pod my-storage-app mounting PVC at /usr/share/nginx/html
 
-Mounted PVC to /usr/share/nginx/html
+Validation:
 
-Validation commands
-cat /opt/KDSP00101/data/index.html
 kubectl get pv,pvc
 kubectl get pods
+cat /opt/KDSP00101/data/index.html
 
-Task 11 – Requests, Limits and ServiceAccount
+Task 11 – Resource Requests & ServiceAccount
 
-Created Deployment neptune-10ab
-
-Image: httpd:2.4-alpine
-
-Replicas: 3
+Deployment neptune-10ab with 3 replicas of httpd:2.4-alpine
 
 Container name: neptune-pod-10ab
 
@@ -53,170 +52,149 @@ Memory request: 20Mi
 
 Namespace: neptune
 
-Validation commands
+Validation:
+
 kubectl get pods -n neptune
 kubectl get sa -n neptune
 
-Task 12 – Secrets and Environment Variables
+Task 12 – Secrets & Environment Variables
 
-Created Secret app-secret
-key3=value1
+Secret app-secret with key3=value1
 
-Created Pod nginx-secret
+Pod nginx-secret consumes secret as env variable BEST_VARIABLE
 
-Injected secret value as environment variable BEST_VARIABLE
+Validation:
 
-Validation commands
 kubectl get secret
 kubectl get pods
 kubectl get pod nginx-secret -o yaml
 
 Task 13 – Pod Resource Requests
 
-Created Pod nginx-resources
+Pod nginx-resources using image nginx:stable
 
-Image: nginx:stable
+CPU request: 300m, Memory request: 1Gi
 
-CPU request: 300m
+Validation:
 
-Memory request: 1Gi
-
-Validation commands
 kubectl get pods
 kubectl get pod nginx-resources -o yaml
 
-Task 14 – Deployment, Service and Ingress
+Task 14 – Deployment, Service & Ingress
 
-Created namespace btu-final
+Namespace btu-final
 
-Created Deployment nginx-deployment
-Replicas: 2
-Image: nginx:1.14.2
-ContainerPort: 80
-Environment variable: NGINX__PORT=8080
+Deployment nginx-deployment (2 replicas, image nginx:1.14.2, containerPort 80, env NGINX__PORT=8080)
 
-Exposed Deployment using ClusterIP Service
+Expose Deployment via ClusterIP Service
 
-Created Ingress
-Host: nginx.final.eu
-Backend service: nginx-deployment port 80
+Create Ingress nginx-deployment host nginx.final.eu backend service nginx-deployment:80
 
-Validation commands
+Validation:
+
 kubectl get namespace
 kubectl get deployment -n btu-final
 kubectl get deployment nginx-deployment -o yaml -n btu-final
 
 Task 15 – ConfigMap Volume Mount
 
-Created ConfigMap another-config
-key4=value3
+ConfigMap another-config with key4=value3
 
-Created Pod nginx-configmap
+Pod nginx-configmap mounts ConfigMap at /also/a/path
 
-Mounted ConfigMap into /also/a/path
+Validation:
 
-Validation commands
 kubectl get cm -n btu-final
 kubectl get pod nginx-configmap -o yaml -n btu-final
 
-Task 16 – Docker Image Build and Export
+Task 16 – Docker Image Build & Export
 
-Created Dockerfile using bash base image
+Dockerfile using bash base image, run ping killercoda.com
 
-Executed ping killercoda.com
+Build image pinger:3.0
 
-Built image pinger:3.0
+Export image to /root/pinger3.0.tar
 
-Exported image to /root/pinger3.0.tar in OCI format
+Validation:
 
-Validation commands
 docker images
 ls /root/
 
-Task 17 – Pod Scheduling with Resource Requests
+Task 17 – Pod Scheduling with Resources
 
-Created Pod nginx-resources in namespace btu-final
+Pod nginx-resources in namespace btu-final
+
+Requests: 200m CPU, 1Gi memory
 
 Image: nginx
 
-CPU request: 200m
+Validation:
 
-Memory request: 1Gi
-
-Validation commands
 kubectl get pods -n btu-final
 kubectl get pod nginx-resources -o yaml -n btu-final
 
-Task 18 – Deployment with Limits and ServiceAccount
+Task 18 – Deployment with Limits & ServiceAccount
 
-Created Deployment neptune-10ab in namespace btu-final
+Deployment neptune-10ab in namespace btu-final
 
-Replicas: 3
-
-Image: httpd:2.4-alpine
-
-Memory request: 20Mi
-
-Memory limit: 50Mi
+3 replicas, memory request 20Mi, limit 50Mi
 
 Pods run under ServiceAccount neptune-sa-v2
 
-Validation commands
+Validation:
+
 kubectl get pods -n btu-final
 kubectl get sa -n btu-final
 
 Task 19 – DaemonSet for Node Configuration
 
-Created namespace configurator
+Namespace configurator
 
-Created DaemonSet configurator
+DaemonSet configurator using bash image
 
-Image: bash
+Mount hostPath /configurator, write /configurator/config
 
-Mounted hostPath /configurator
+Keep running using sleep 1d
 
-Wrote configuration file to /configurator/config
+Validation:
 
-Kept container running using sleep
-
-Validation command
 kubectl get daemonset -n configurator -o yaml
 
-Task 20 – Pod, Service and Port Forwarding
+Task 20 – Pod, Service & Port Forward
 
-Created namespace httpd-app
+Namespace httpd-app
 
-Created Pod app-pod using httpd:latest
+Pod app-pod using image httpd:latest
 
-Created Service app-svc of type ClusterIP
+Service app-svc ClusterIP, port 80
 
-Forwarded local port using kubectl port-forward
+Port-forward to access web app using curl
 
-Verified application using curl
+Validation:
 
-Validation commands
 kubectl get pod -n httpd-app -o yaml
 kubectl get service app-svc -n httpd-app -o yaml
 
 Task 21 – Redis ConfigMap
 
-Created ConfigMap redis-config
-maxmemory=2mb
-maxmemory-policy=allkeys-lru
+ConfigMap redis-config
 
-Validation command
+key: maxmemory=2mb, maxmemory-policy=allkeys-lru
+
+Validation:
+
 kubectl get cm redis-config -o yaml
 
 Task 22 – Minimal Ingress
 
-Created Ingress minimal-ingress
+Ingress minimal-ingress
 
-Domain: hello.com
+Domain hello.com → Service apache-svc:80
 
-Backend service: apache-svc port 80
+Validation:
 
-Validation command
 kubectl get ingress minimal-ingress -o yaml
 
 Summary
-This project demonstrates real-world Kubernetes administration skills including persistent storage management, secure configuration, workload orchestration, networking with services and ingress, resource optimization, and node-level configuration.
+
+This project demonstrates Kubernetes skills including persistent storage, workload deployment, secure configuration, services, ingress, resource management, and node-level configuration.
